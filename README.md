@@ -27,4 +27,4 @@ Este portal resolve o problema entregando autonomia com segurança. A equipe té
 
 1. Clone o repositório:
 ```bash
-git clone [https://github.com/seu-usuario/seu-repositorio.git](https://github.com/seu-usuario/seu-repositorio.git)
+git clone [https://github.com/lucianoTiberio/portal-de-relatorios](https://github.com/lucianoTiberio/portal-de-relatorios)
