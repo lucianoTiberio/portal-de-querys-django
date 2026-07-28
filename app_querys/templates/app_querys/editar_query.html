@@ -1,0 +1,27 @@
+{% extends "app_querys/base.html" %}
+
+{% block title %}Editar Query - Portal de Relatórios{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0"> Editando: {{ relatorio.nome }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <a href="{% url 'painel_relatorios' %}" class="btn btn-secondary me-2">Cancelar</a>
+                        <button type="submit" class="btn btn-warning fw-bold">Salvar Alterações</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

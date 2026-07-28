@@ -1,0 +1,28 @@
+{% extends "app_querys/base.html" %}
+
+{% block title %}Nova Query - Portal de Relatórios{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Cadastrar Nova Query</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <!-- O formulário desenhado pelo Django -->
+                    {{ form.as_p }}
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <a href="{% url 'painel_relatorios' %}" class="btn btn-secondary me-2">Cancelar</a>
+                        <button type="submit" class="btn btn-success">Salvar Relatório</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

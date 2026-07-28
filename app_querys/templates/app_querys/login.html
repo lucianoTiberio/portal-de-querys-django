@@ -1,0 +1,34 @@
+{% extends "app_querys/base.html" %}
+
+{% block title %}Login - Portal de Relatórios{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white text-center py-3">
+                <h4 class="mb-0">Acesso Restrito</h4>
+            </div>
+            <div class="card-body p-4">
+                {% if form.errors %}
+                    <div class="alert alert-danger">Usuário ou senha incorretos.</div>
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Usuário:</label>
+                        <!-- Usamos uma classe do Bootstrap embutida no form do Django -->
+                        <input type="text" name="username" class="form-control" required autofocus>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Senha:</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Entrar no Sistema</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
