@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db import connections # Importante: gerencia nossos vários bancos de dados
 from .forms import QueryRelatorioForm
 from .models import QueryRelatorio
+from django.core.paginator import Paginator
 
 @login_required
 def cadastrar_query(request):
@@ -106,14 +107,19 @@ def painel_relatorios(request):
     if request.user.is_superuser:
         relatorios = QueryRelatorio.objects.all()
 
-    # Se for um usuário comum, ele só vê o que o grupo dele permite
+        # Se for um usuário comum, ele só vê o que o grupo dele permite
     else:
         relatorios = QueryRelatorio.objects.filter(
             grupos_permitidos__in=request.user.groups.all()
         ).distinct()
         # O .distinct() garante que se a query pertencer a 2 grupos que o usuário faz parte, ela não apareça duplicada.
 
-    context = {'relatorios': relatorios}
+        # backend paginacao
+    paginator = Paginator(relatorios, 18)
+    numero_da_pagina = request.GET.get('page')
+    querys = paginator.get_page(numero_da_pagina)
+
+    context = {'querys': querys}
     return render(request, 'app_querys/painel.html', context)
 
 @login_required
