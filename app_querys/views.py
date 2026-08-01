@@ -86,7 +86,7 @@ def executar_extracao(request, query_id):
             cursor.execute(sql)
 
         colunas = [col[0] for col in cursor.description]
-        dados = cursor.fetchall()
+        dados = cursor.fetchall() 
 
     # 6. Gerando e baixando o Excel
     df = pd.DataFrame(dados, columns=colunas)
