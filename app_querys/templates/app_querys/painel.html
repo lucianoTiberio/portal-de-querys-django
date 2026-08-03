@@ -4,16 +4,29 @@
 
 {% block content %}
     <!-- Cabeçalho do Painel com Botão alinhado à direita -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Painel de Extração</h2>
+   <div class="d-flex justify-content-between align-items-center mb-4">
 
+    <!-- 1. TÍTULO (Fica na esquerda) -->
+    <h2 class="mb-0">Painel de Extração</h2>
+
+    <!-- 2. FORMULÁRIO DE BUSCA (Fica no centro) -->
+
+    <form method="GET" action="{% url 'painel_relatorios' %}" class="d-flex m-0">
+        <input type="text" name="pesquisa" value="{{ termo_pesquisa }}" class="form-control form-control-lg shadow-sm me-2" placeholder="Pesquisar por nome">
+        <button type="submit" class="btn btn-primary btn-lg px-4">Buscar</button>
+        <a href="{% url 'painel_relatorios' %}" class="btn btn-outline-secondary btn-lg ms-2 px-4 d-flex align-items-center">Limpar</a>
+    </form>
+
+    <!-- 3. BOTÕES DE AÇÃO (Ficam na direita) -->
+
+    <div class="d-flex">
         {% if request.user.is_superuser %}
-        <div>
-            <a href="{% url 'cadastrar_query' %}" class="btn btn-primary">+ Nova Query</a>
-            <a href="{% url 'admin:index' %}" class="btn btn-dark ms-2" target="_blank">Painel Admin</a>
+            <a href="{% url 'cadastrar_query' %}" class="btn btn-primary btn-lg">+ Nova Query</a>
+            <a href="{% url 'admin:index' %}" class="btn btn-dark btn-lg ms-2" target="_blank">Painel Admin</a>
         {% endif %}
-        </div>
     </div>
+
+</div>
 
     <!-- Sistema de Grid do Bootstrap para desenhar os Cards lado a lado -->
     <div class="row">

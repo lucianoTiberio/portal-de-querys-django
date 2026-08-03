@@ -7,6 +7,7 @@ from django.db import connections # Importante: gerencia nossos vários bancos d
 from .forms import QueryRelatorioForm
 from .models import QueryRelatorio
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 @login_required
 def cadastrar_query(request):
@@ -103,6 +104,8 @@ def executar_extracao(request, query_id):
 
 @login_required
 def painel_relatorios(request):
+    termo_pesquisa = request.GET.get('pesquisa', '')
+
     # Se o usuário for Administrador (Superuser), ele vê tudo
     if request.user.is_superuser:
         relatorios = QueryRelatorio.objects.all()
@@ -114,12 +117,17 @@ def painel_relatorios(request):
         ).distinct()
         # O .distinct() garante que se a query pertencer a 2 grupos que o usuário faz parte, ela não apareça duplicada.
 
+    if termo_pesquisa:
+        relatorios = relatorios.filter(
+            Q(nome__icontains=termo_pesquisa)
+        )
+
         # backend paginacao
     paginator = Paginator(relatorios, 18)
     numero_da_pagina = request.GET.get('page')
     querys = paginator.get_page(numero_da_pagina)
 
-    context = {'querys': querys}
+    context = {'querys': querys, 'termo_pesquisa': termo_pesquisa}
     return render(request, 'app_querys/painel.html', context)
 
 @login_required
