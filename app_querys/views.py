@@ -35,6 +35,7 @@ def executar_extracao(request, query_id):
     sql = relatorio.codigo_sql
 
     # 1. O Detetive pega os nomes técnicos
+    # Busca qualquer palavra que comece com ':'
     parametros_crus = list(set(re.findall(r':([a-zA-Z0-9_]+)', sql)))
 
     # 2. O Tradutor Evoluído
@@ -64,8 +65,7 @@ def executar_extracao(request, query_id):
             'tipo': tipo_input
         })
 
-    # 3. A Fase GET (ESTA FOI A PARTE QUE TINHA SUMIDO!)
-    # Intercepta o clique e mostra a tela
+    # 3. A Fase GET (Mostra a tela)
     if parametros_crus and request.method == 'GET':
         context = {
             'relatorio': relatorio,
@@ -73,19 +73,32 @@ def executar_extracao(request, query_id):
         }
         return render(request, 'app_querys/pedir_parametros.html', context)
 
-    # 4. A Fase POST (Pegando os dados digitados)
+    # 4. A Fase POST (Pegando os dados digitados com tratamento)
     valores_parametros = {}
     if request.method == 'POST':
         for p in parametros_crus:
-            valores_parametros[p] = request.POST.get(p, '')
+            # Pega o valor e remove espaços extras no início e fim
+            valor = request.POST.get(p, '').strip()
+            valores_parametros[p] = valor
+            
+        # DEBUG: Mostra no terminal o que chegou do formulário
+        print(f"Valores recebidos na extração '{relatorio.nome}':", valores_parametros)
 
     # 5. Execução Segura no Oracle
     with connections['oracle_leitura'].cursor() as cursor:
         if valores_parametros:
+            # Validação: Verifica se algum parâmetro ficou em branco
+            if not all(valores_parametros.values()):
+                return HttpResponse(
+                    f"Erro: Todos os parâmetros devem ser preenchidos. Valores recebidos: {valores_parametros}", 
+                    status=400
+                )
+            
             cursor.execute(sql, valores_parametros)
         else:
             cursor.execute(sql)
 
+        # Pegando os nomes das colunas e os dados
         colunas = [col[0] for col in cursor.description]
         dados = cursor.fetchall() 
 
@@ -98,6 +111,7 @@ def executar_extracao(request, query_id):
 
     df.to_excel(response, index=False, engine='openpyxl')
 
+    # Cookie para controle de loading na tela
     response.set_cookie('download_pronto', 'sim')
 
     return response
